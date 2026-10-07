@@ -3,27 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Laporan Data Lembaga MDTA - Pangandaran</title>
+    <title>Form Laporan Resmi Data Lembaga MDTA - Pangandaran</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
 
-    <div class="max-w-xl mx-auto px-4 py-12 w-full flex-grow space-y-6">
+    <div class="max-w-2xl mx-auto px-4 py-12 w-full flex-grow space-y-6">
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-8 text-center space-y-2">
-            <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl text-xl font-bold mb-1 shadow-inner">🏫</div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Form Laporan Data MDTA</h1>
-            <p class="text-xs text-slate-500">Kabupaten Pangandaran &bull; Silakan isi data lembaga dengan benar.</p>
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl text-xl font-bold mb-1 shadow-inner">📋</div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Form Pendataan Resmi MDTA</h1>
+            <p class="text-xs text-slate-500">Kabupaten Pangandaran &bull; Silakan lengkapi data lembaga sesuai format laporan.</p>
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-8">
-            <form onsubmit="kirimLaporanSekolah(event)" class="space-y-5">
+            <form onsubmit="kirimLaporanLengkap(event)" class="space-y-5">
+                
+                <!-- Nama Lembaga -->
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Lembaga / MDTA</label>
                     <input type="text" id="namaLembaga" required placeholder="Contoh: MDTA Al-Huda" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm transition">
                 </div>
 
+                <!-- Alamat / Desa -->
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Pilih Kecamatan</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Alamat / Dusun / Desa</label>
+                    <input type="text" id="alamat" required placeholder="Contoh: Dusun Cikadu, Desa Sukamaju" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm transition">
+                </div>
+
+                <!-- Pilihan Kecamatan -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Kecamatan</label>
                     <select id="pilihKecamatan" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm transition bg-white">
                         <option value="" disabled selected>-- Pilih Kecamatan --</option>
                         <option value="Cigugur">Cigugur</option>
@@ -39,19 +48,32 @@
                     </select>
                 </div>
 
+                <!-- Grid Jumlah Siswa & Guru -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Jumlah Total Siswa / Santri</label>
+                        <input type="number" id="jumlahSiswa" required min="1" placeholder="0" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm transition">
+                    </div>
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Jumlah Guru / Ustadz</label>
                         <input type="number" id="jumlahGuru" required min="1" placeholder="0" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm transition">
                     </div>
+                </div>
+
+                <!-- Grid Nama Kepala & No HP -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Jumlah Siswa / Santri</label>
-                        <input type="number" id="jumlahSiswa" required min="1" placeholder="0" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm transition">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Kepala / Pimpinan</label>
+                        <input type="text" id="namaKepala" required placeholder="Nama Kepala Madrasah" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nomor HP / WhatsApp</label>
+                        <input type="text" id="noHp" required placeholder="08xxxxxxxxxx" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm transition">
                     </div>
                 </div>
 
                 <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3.5 px-4 rounded-xl text-sm transition shadow-lg shadow-blue-500/25">
-                    Kirim Laporan Lembaga
+                    Kirim Laporan Resmi
                 </button>
             </form>
             <div id="statusPesan" class="mt-4 text-center text-xs font-semibold hidden"></div>
@@ -78,13 +100,17 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        window.kirimLaporanSekolah = async function(event) {
+        window.kirimLaporanLengkap = async function(event) {
             event.preventDefault();
             
             const namaLembaga = document.getElementById('namaLembaga').value.trim();
+            const alamat = document.getElementById('alamat').value.trim();
             const kecamatan = document.getElementById('pilihKecamatan').value;
-            const jumlahGuru = document.getElementById('jumlahGuru').value;
             const jumlahSiswa = document.getElementById('jumlahSiswa').value;
+            const jumlahGuru = document.getElementById('jumlahGuru').value;
+            const namaKepala = document.getElementById('namaKepala').value.trim();
+            const noHp = document.getElementById('noHp').value.trim();
+            
             const statusPesan = document.getElementById('statusPesan');
             const btnSubmit = document.getElementById('btnSubmit');
 
@@ -97,20 +123,26 @@
             try {
                 await addDoc(collection(db, "mdta_sekolah"), {
                     nama_lembaga: namaLembaga,
+                    alamat: alamat,
                     kecamatan: kecamatan,
-                    jumlah_guru: Number(jumlahGuru),
                     jumlah_siswa: Number(jumlahSiswa),
+                    jumlah_guru: Number(jumlahGuru),
+                    nama_kepala: namaKepala,
+                    no_hp: noHp,
                     waktu: new Date().toISOString()
                 });
 
                 statusPesan.classList.remove('text-slate-500');
                 statusPesan.classList.add('text-emerald-600');
-                statusPesan.innerText = "Sukses! Laporan berhasil dikirim ke pusat.";
+                statusPesan.innerText = "Sukses! Laporan lengkap berhasil dikirim ke pusat.";
                 
                 document.getElementById('namaLembaga').value = "";
+                document.getElementById('alamat').value = "";
                 document.getElementById('pilihKecamatan').selectedIndex = 0;
-                document.getElementById('jumlahGuru').value = "";
                 document.getElementById('jumlahSiswa').value = "";
+                document.getElementById('jumlahGuru').value = "";
+                document.getElementById('namaKepala').value = "";
+                document.getElementById('noHp').value = "";
 
             } catch (error) {
                 console.error("Error:", error);
@@ -119,7 +151,7 @@
                 statusPesan.innerText = "Gagal: " + error.message;
             } finally {
                 btnSubmit.disabled = false;
-                btnSubmit.innerText = "Kirim Laporan Lembaga";
+                btnSubmit.innerText = "Kirim Laporan Resmi";
             }
         };
     </script>
