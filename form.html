@@ -26,16 +26,16 @@
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Pilih Kecamatan</label>
                     <select id="pilihKecamatan" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm transition bg-white">
                         <option value="" disabled selected>-- Pilih Kecamatan --</option>
-                        <option value="Parigi">Parigi</option>
+                        <option value="Cigugur">Cigugur</option>
                         <option value="Cijulang">Cijulang</option>
                         <option value="Cimerak">Cimerak</option>
-                        <option value="Sidamulih">Sidamulih</option>
-                        <option value="Pangandaran">Pangandaran</option>
                         <option value="Kalipucang">Kalipucang</option>
-                        <option value="Padaherang">Padaherang</option>
-                        <option value="Mangunjaya">Mangunjaya</option>
                         <option value="Langkaplancar">Langkaplancar</option>
-                        <option value="Cigugur">Cigugur</option>
+                        <option value="Mangunjaya">Mangunjaya</option>
+                        <option value="Padaherang">Padaherang</option>
+                        <option value="Pangandaran">Pangandaran</option>
+                        <option value="Parigi">Parigi</option>
+                        <option value="Sidamulih">Sidamulih</option>
                     </select>
                 </div>
 
@@ -95,7 +95,6 @@
             statusPesan.innerText = "Menyimpan ke server...";
 
             try {
-                // Menyimpan ke koleksi khusus "mdta_sekolah"
                 await addDoc(collection(db, "mdta_sekolah"), {
                     nama_lembaga: namaLembaga,
                     kecamatan: kecamatan,
