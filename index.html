@@ -30,22 +30,24 @@
             </div>
         </header>
 
+        <!-- KARTU UTAMA: KECAMATAN DENGAN SISWA TERBANYAK -->
         <section class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl shadow-xl p-6 md:p-8 relative overflow-hidden">
             <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
                     <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium mb-3 border border-white/20">
-                        🏆 KECAMATAN DENGAN LAPORAN TERBANYAK
+                        🎓 KECAMATAN DENGAN JUMLAH SISWA TERBANYAK
                     </div>
                     <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight" id="topKecamatanName">-</h2>
-                    <p class="text-xs text-blue-100 mt-1">Wilayah dengan aktivitas pengisian data terbanyak saat ini.</p>
+                    <p class="text-xs text-blue-100 mt-1">Wilayah dengan total santri/siswa terbanyak di Kabupaten Pangandaran.</p>
                 </div>
                 <div class="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/20 text-right md:text-left min-w-[160px]">
-                    <span class="block text-xs uppercase tracking-wider text-blue-200 mb-0.5">Total Laporan</span>
-                    <span class="text-3xl font-black text-amber-300" id="topKecamatanValue">0</span>
+                    <span class="block text-xs uppercase tracking-wider text-blue-200 mb-0.5">Total Siswa</span>
+                    <span class="text-3xl font-black text-amber-300" id="topKecamatanValue">0 Siswa</span>
                 </div>
             </div>
         </section>
 
+        <!-- KOTAK STATISTIK RINGKASAN -->
         <section class="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex items-center justify-between">
                 <div>
@@ -72,6 +74,7 @@
             </div>
         </section>
 
+        <!-- TABEL REKAPITULASI -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
@@ -134,7 +137,6 @@
             tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400 italic">Menyinkronkan data dari server...</td></tr>`;
 
             try {
-                // Membaca dari koleksi khusus "mdta_sekolah"
                 const querySnapshot = await getDocs(collection(db, "mdta_sekolah"));
                 tbody.innerHTML = "";
 
@@ -144,39 +146,44 @@
                     document.getElementById('statTotalSiswa').innerText = "0";
                     document.getElementById('statTotalKecamatan').innerText = "0";
                     document.getElementById('topKecamatanName').innerText = "-";
-                    document.getElementById('topKecamatanValue').innerText = "0";
+                    document.getElementById('topKecamatanValue').innerText = "0 Siswa";
                     return;
                 }
 
                 let totalLembaga = 0;
-                let totalSiswa = 0;
+                let totalSiswaSemua = 0;
                 let listData = [];
+                let kecamatanSiswa = {};
                 let kecamatanCount = {};
 
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     listData.push(data);
                     totalLembaga++;
-                    totalSiswa += Number(data.jumlah_siswa || 0);
+                    
+                    const jumlahSiswaItem = Number(data.jumlah_siswa || 0);
+                    totalSiswaSemua += jumlahSiswaItem;
 
                     const kec = data.kecamatan || "Lainnya";
+                    kecamatanSiswa[kec] = (kecamatanSiswa[kec] || 0) + jumlahSiswaItem;
                     kecamatanCount[kec] = (kecamatanCount[kec] || 0) + 1;
                 });
 
+                // Cari kecamatan dengan jumlah siswa terbanyak
                 let topKec = "-";
-                let topCount = 0;
-                for (let kec in kecamatanCount) {
-                    if (kecamatanCount[kec] > topCount) {
-                        topCount = kecamatanCount[kec];
+                let topSiswaMax = 0;
+                for (let kec in kecamatanSiswa) {
+                    if (kecamatanSiswa[kec] > topSiswaMax) {
+                        topSiswaMax = kecamatanSiswa[kec];
                         topKec = kec;
                     }
                 }
 
                 document.getElementById('statTotalLembaga').innerText = totalLembaga;
-                document.getElementById('statTotalSiswa').innerText = totalSiswa.toLocaleString();
+                document.getElementById('statTotalSiswa').innerText = totalSiswaSemua.toLocaleString();
                 document.getElementById('statTotalKecamatan').innerText = Object.keys(kecamatanCount).length;
                 document.getElementById('topKecamatanName').innerText = topKec;
-                document.getElementById('topKecamatanValue').innerText = topCount + " Laporan";
+                document.getElementById('topKecamatanValue').innerText = topSiswaMax.toLocaleString() + " Siswa";
 
                 let no = 1;
                 listData.forEach((item) => {
