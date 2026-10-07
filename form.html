@@ -81,5 +81,48 @@
         window.kirimLaporanSekolah = async function(event) {
             event.preventDefault();
             
-            const namaLembaga =
+            const namaLembaga = document.getElementById('namaLembaga').value.trim();
+            const kecamatan = document.getElementById('pilihKecamatan').value;
+            const jumlahGuru = document.getElementById('jumlahGuru').value;
+            const jumlahSiswa = document.getElementById('jumlahSiswa').value;
+            const statusPesan = document.getElementById('statusPesan');
+            const btnSubmit = document.getElementById('btnSubmit');
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Mengirim data...";
+            statusPesan.classList.remove('hidden', 'text-red-600', 'text-emerald-600');
+            statusPesan.classList.add('text-slate-500');
+            statusPesan.innerText = "Menyimpan ke server...";
+
+            try {
+                // Menyimpan ke koleksi khusus "mdta_sekolah"
+                await addDoc(collection(db, "mdta_sekolah"), {
+                    nama_lembaga: namaLembaga,
+                    kecamatan: kecamatan,
+                    jumlah_guru: Number(jumlahGuru),
+                    jumlah_siswa: Number(jumlahSiswa),
+                    waktu: new Date().toISOString()
+                });
+
+                statusPesan.classList.remove('text-slate-500');
+                statusPesan.classList.add('text-emerald-600');
+                statusPesan.innerText = "Sukses! Laporan berhasil dikirim ke pusat.";
                 
+                document.getElementById('namaLembaga').value = "";
+                document.getElementById('pilihKecamatan').selectedIndex = 0;
+                document.getElementById('jumlahGuru').value = "";
+                document.getElementById('jumlahSiswa').value = "";
+
+            } catch (error) {
+                console.error("Error:", error);
+                statusPesan.classList.remove('text-slate-500');
+                statusPesan.classList.add('text-red-600');
+                statusPesan.innerText = "Gagal: " + error.message;
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "Kirim Laporan Lembaga";
+            }
+        };
+    </script>
+</body>
+</html>
