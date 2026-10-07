@@ -81,7 +81,7 @@
     <!-- SKRIP FIREBASE & PENGIRIMAN DATA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, adddoc, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDb, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAzOfst74GWHTVVGY2L-H4K5-En8og",
@@ -117,7 +117,7 @@
             statusPesan.innerText = "Sedang mengirim laporan ke server...";
 
             try {
-                // Menyimpan ke database koleksi "lembaga_sekolah" yang sama dengan pusat
+                // Membuat dokumen baru dengan ID otomatis di koleksi "lembaga_sekolah"
                 const newDocRef = doc(collection(db, "lembaga_sekolah"));
                 await setDoc(newDocRef, {
                     nama_lembaga: namaLembaga,
