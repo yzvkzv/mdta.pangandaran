@@ -25,7 +25,7 @@
                     🔄 Refresh Data
                 </button>
                 <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2.5 rounded-xl text-xs transition shadow-sm">
-                    🖨️ Cetak Laporan
+                    🖨️ Cetak Rekap
                 </button>
             </div>
         </header>
@@ -79,7 +79,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
                     <h3 class="text-md font-bold text-slate-900">Rekapitulasi Laporan Masuk</h3>
-                    <p class="text-xs text-slate-500">Daftar lembaga yang telah mengirimkan data secara real-time.</p>
+                    <p class="text-xs text-slate-500">Klik pada nama lembaga untuk melihat rincian identitas dan cetak PDF.</p>
                 </div>
                 <div class="w-full sm:w-64">
                     <input type="text" id="searchKecamatan" placeholder="Cari lembaga / kecamatan..." onkeyup="filterTabel()" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-blue-600 focus:outline-none">
@@ -91,7 +91,7 @@
                     <thead class="bg-slate-100/70 text-slate-700 uppercase font-bold tracking-wider border-b border-slate-200">
                         <tr>
                             <th class="p-3.5">No</th>
-                            <th class="p-3.5">Nama Lembaga / Sekolah</th>
+                            <th class="p-3.5">Nama Lembaga / Sekolah (Klik untuk Detail)</th>
                             <th class="p-3.5">Kecamatan</th>
                             <th class="p-3.5 text-center">Jumlah Guru</th>
                             <th class="p-3.5 text-center">Jumlah Siswa</th>
@@ -106,6 +106,55 @@
             </div>
         </section>
 
+    </div>
+
+    <!-- MODAL DETAIL / IDENTITAS LEMBAGA -->
+    <div id="modalDetail" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl space-y-6 border border-slate-100 animate-in fade-in zoom-in duration-200">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">Rincian Identitas Lembaga</span>
+                    <h3 class="text-xl font-bold text-slate-900 mt-1.5" id="modalNamaLembaga">-</h3>
+                </div>
+                <button onclick="tutupModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">✕</button>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-600">
+                <div class="flex justify-between py-2 border-b border-slate-50">
+                    <span class="font-semibold text-slate-400 uppercase tracking-wider">Alamat / Desa</span>
+                    <span class="font-medium text-slate-800 text-right" id="modalAlamat">-</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-slate-50">
+                    <span class="font-semibold text-slate-400 uppercase tracking-wider">Kecamatan</span>
+                    <span class="font-medium text-slate-800" id="modalKecamatan">-</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-slate-50">
+                    <span class="font-semibold text-slate-400 uppercase tracking-wider">Jumlah Siswa / Santri</span>
+                    <span class="font-bold text-blue-600 font-mono text-sm" id="modalSiswa">-</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-slate-50">
+                    <span class="font-semibold text-slate-400 uppercase tracking-wider">Jumlah Guru / Ustadz</span>
+                    <span class="font-bold text-slate-800 font-mono text-sm" id="modalGuru">-</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-slate-50">
+                    <span class="font-semibold text-slate-400 uppercase tracking-wider">Nama Kepala Pimpinan</span>
+                    <span class="font-medium text-slate-800" id="modalKepala">-</span>
+                </div>
+                <div class="flex justify-between py-2">
+                    <span class="font-semibold text-slate-400 uppercase tracking-wider">Nomor HP / WhatsApp</span>
+                    <span class="font-medium text-slate-800 font-mono" id="modalNoHp">-</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+                <button onclick="window.print()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl text-xs transition shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2">
+                    🖨️ Cetak / Simpan PDF
+                </button>
+                <button onclick="tutupModal()" class="px-5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 rounded-xl text-xs transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
     </div>
 
     <footer class="text-center py-6 text-xs text-slate-400 border-t border-slate-200 bg-white mt-12">
@@ -128,6 +177,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        let dataLembagaList = [];
+
         window.onload = function() {
             muatDataStatistik();
         };
@@ -139,6 +190,7 @@
             try {
                 const querySnapshot = await getDocs(collection(db, "mdta_sekolah"));
                 tbody.innerHTML = "";
+                dataLembagaList = [];
 
                 if (querySnapshot.empty) {
                     tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Belum ada data laporan masuk.</td></tr>`;
@@ -152,13 +204,12 @@
 
                 let totalLembaga = 0;
                 let totalSiswaSemua = 0;
-                let listData = [];
                 let kecamatanSiswa = {};
                 let kecamatanCount = {};
 
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    listData.push(data);
+                    dataLembagaList.push(data);
                     totalLembaga++;
                     
                     const jumlahSiswaItem = Number(data.jumlah_siswa || 0);
@@ -169,7 +220,6 @@
                     kecamatanCount[kec] = (kecamatanCount[kec] || 0) + 1;
                 });
 
-                // Cari kecamatan dengan jumlah siswa terbanyak
                 let topKec = "-";
                 let topSiswaMax = 0;
                 for (let kec in kecamatanSiswa) {
@@ -186,15 +236,16 @@
                 document.getElementById('topKecamatanValue').innerText = topSiswaMax.toLocaleString() + " Siswa";
 
                 let no = 1;
-                listData.forEach((item) => {
+                dataLembagaList.forEach((item, index) => {
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition";
+                    tr.className = "hover:bg-slate-50 transition cursor-pointer";
+                    tr.onclick = () => bukaDetail(index);
                     tr.innerHTML = `
                         <td class="p-3.5 font-medium">${no++}</td>
-                        <td class="p-3.5 font-semibold text-slate-900">${item.nama_lembaga || '-'}</td>
+                        <td class="p-3.5 font-semibold text-blue-600 underline">${item.nama_lembaga || '-'}</td>
                         <td class="p-3.5">${item.kecamatan || '-'}</td>
                         <td class="p-3.5 text-center font-mono">${item.jumlah_guru || '0'}</td>
-                        <td class="p-3.5 text-center font-mono font-medium text-blue-600">${item.jumlah_siswa || '0'}</td>
+                        <td class="p-3.5 text-center font-mono font-medium text-slate-800">${item.jumlah_siswa || '0'}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -203,6 +254,25 @@
                 console.error("Gagal memuat:", error);
                 tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500">Gagal terhubung ke database.</td></tr>`;
             }
+        };
+
+        window.bukaDetail = function(index) {
+            const item = dataLembagaList[index];
+            if (!item) return;
+
+            document.getElementById('modalNamaLembaga').innerText = item.nama_lembaga || '-';
+            document.getElementById('modalAlamat').innerText = item.alamat || 'Tidak diisi';
+            document.getElementById('modalKecamatan').innerText = item.kecamatan || '-';
+            document.getElementById('modalSiswa').innerText = (item.jumlah_siswa || 0) + " Santri/Siswa";
+            document.getElementById('modalGuru').innerText = (item.jumlah_guru || 0) + " Ustadz/Guru";
+            document.getElementById('modalKepala').innerText = item.nama_kepala || 'Tidak diisi';
+            document.getElementById('modalNoHp').innerText = item.no_hp || 'Tidak diisi';
+
+            document.getElementById('modalDetail').classList.remove('hidden');
+        };
+
+        window.tutupModal = function() {
+            document.getElementById('modalDetail').classList.add('hidden');
         };
 
         window.filterTabel = function() {
